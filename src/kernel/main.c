@@ -99,13 +99,15 @@ void main(struct stivale2_struct *stivale2_struct) {
 
     
     
-    char * hello = physmem_alloc(200);
+    char * hello = physmem_alloc(0x800);
+    
     physmem_free(hello);
     
+    
 
-    char * buf = physmem_alloc(0x10000);
+    char * buf = physmem_alloc(0x1000);
 
-    memset(buf,0,10000);
+    memset(buf,0,0x1000);
 
     logf("\ninput > ");
 

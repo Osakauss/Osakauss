@@ -8,6 +8,7 @@ typedef struct{
     u32 start;
     u32 end;
     u32 realSize;
+    u32 flag;
 }block;
 
 
