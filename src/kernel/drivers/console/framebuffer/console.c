@@ -29,13 +29,13 @@ static struct Sconsole console = {
 	.barrier = {0,0},
 	.offset_x = 0,
 	.offset_y = 0,
-};  
+};
 
 extern struct Sframebuffer framebuffer;
 
 
 static void putchat(char c){ // meaning: put char at ( this puts a char a postion entered)
-    
+
     bitmapPC( console.column, console.row, c, console.color);
     console.column += BITMAP_SIZE + 1;
 }
@@ -46,16 +46,17 @@ scroll(void)
 {
 	if(console.row >= console.height-2*BITMAP_SIZE-2)
 	{
-		memcpy(framebuffer.buffer, &framebuffer.buffer[((framebuffer.pitch)/4) * (BITMAP_SIZE+1)], (framebuffer.pitch)*(console.height-(BITMAP_SIZE+1)));
+		// I literally have no idea why it needs to be multiplied by 4, just did some testing and it works.
+		memcpy(framebuffer.buffer, &framebuffer.buffer[4*((framebuffer.pitch)/4) * (BITMAP_SIZE+1)], (framebuffer.pitch)*(console.height-((BITMAP_SIZE)+1)));
 		console.row -= BITMAP_SIZE+1;
 		--console.offset_y;
-		
+
 	}
-	
+
 }
 
 
-bool console_require() 
+bool console_require()
 {
 
 	console.height = framebuffer.height;
@@ -69,10 +70,10 @@ bool console_require()
 
 
 
-void putch(char c) 
+void putch(char c)
 {
-	
-	
+
+
 
 	if (c == '\n'){
 		console.row += BITMAP_SIZE+1;
@@ -87,7 +88,7 @@ void putch(char c)
 	}
 	else if (c == '\b'){
 		if (console.column == 0){
-		
+
 		}
 		else{
 				if (console.barrier == 0){
@@ -104,11 +105,11 @@ void putch(char c)
 					putch(' ');
                     console.column -= BITMAP_SIZE+1;
 					--console.offset_x;
-					
+
 				}
-			
+
 		}
-		
+
 	}
 	else if (c == '\t'){
 		for (int x=0; x!=4; x++){
@@ -126,14 +127,14 @@ void putch(char c)
 	scroll();
 	update_cursor(console.column,console.row);
 }
- 
-static void write(string s, u32 size) 
+
+static void write(string s, u32 size)
 {
 	for (u32 i = 0; i < size; i++)
 		putch(s[i]);
 }
 
-void printk(string s) 
+void printk(string s)
 {
 	write(s, strlen(s));
 }
@@ -157,7 +158,7 @@ update_cursor()
     putchat((char)221);*/
 }
 
-extern void 
+extern void
 MVCURSORC(int i){ // what it means: 'move cursor column'.
 	console.column = console.column+BITMAP_SIZE + i;
 	update_cursor();

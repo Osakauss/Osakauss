@@ -1,16 +1,3 @@
-/*
-EFI BOOTABLE : YES
-LEGACY BOOTABLE : YES
-TOTAL RAM : 4096 MB
-GRAPHICS : YES
-FONT : CUSTOM MADE
-DRIVE : 40 MB
-IDT : YES
-GDT : YES
-TSS : WORKING ON IT
-MMAP : WORKING ON IT
-*/
-
 #include <stdint.h>
 #include <stivale2.h>
 #include <x86.h>
@@ -26,16 +13,16 @@ MMAP : WORKING ON IT
 u8 stack[16000];
 
 
-static struct stivale2_header_tag_framebuffer framebuffer_header_tag = 
+static struct stivale2_header_tag_framebuffer framebuffer_header_tag =
 {
     .tag = {
         .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
-        .next = 0 
+        .next = 0
     },
-    .framebuffer_width  = 800,
-    .framebuffer_height = 600,
+    .framebuffer_width  = 0,
+    .framebuffer_height = 0,
     .framebuffer_bpp    = 32
-}; 
+};
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id) {
     struct stivale2_tag *current_tag = (void *)stivale2_struct->tags;
@@ -61,7 +48,7 @@ bool init(struct stivale2_struct *stivale2_struct){
     framebuffer_tag = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
 
     framebufferInit(framebuffer_tag->framebuffer_addr,framebuffer_tag->framebuffer_addr, framebuffer_tag->framebuffer_width,framebuffer_tag->framebuffer_height,framebuffer_tag->framebuffer_bpp,framebuffer_tag->framebuffer_pitch);
-    
+
     require_log(LOG_BOTH);
 
     trace = true;
@@ -70,10 +57,10 @@ bool init(struct stivale2_struct *stivale2_struct){
     gdtInit();
     IDTInit();
     ISRInit();
-    enable_interrupts();    
+    enable_interrupts();
     require_input(INPUT_BOTH);
     physmem_init();
-    
+
     return true;
 }
 
@@ -97,13 +84,13 @@ static struct stivale2_header stivale_hdr = {
 void main(struct stivale2_struct *stivale2_struct) {
     init(stivale2_struct);
 
-    
-    
+
+
     char * hello = physmem_alloc(0x800);
-    
+
     physmem_free(hello);
-    
-    
+
+
 
     char * buf = physmem_alloc(0x1000);
 
@@ -115,7 +102,7 @@ void main(struct stivale2_struct *stivale2_struct) {
 
     logf("\nyour input = %s\n",buf);
     physmem_free(buf);
-  
+
     for (;;){
         asm volatile("hlt");
     }
