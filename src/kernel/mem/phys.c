@@ -1,6 +1,6 @@
 #include <libs/stdlib.h>
 #include <kernel/log.h>
-#include <kernel/mm/phys.h>
+#include <kernel/mem/phys.h>
 
 #define FRAMES_COUNT 0x800
 #define BLOCK_SIZE 0x1000
@@ -23,7 +23,7 @@ emptyBlock(u32 addr){
     frames.blocks[block].start = 0;
     frames.blocks[block].end = 0;
 }
-static void 
+static void
 fillBlock(block block){
     for (int x = block.start; x < block.end; x++){
         frames.frames[x] = 1;
@@ -44,7 +44,7 @@ static block FindEmptyBlocks(u32 size){
                 return empty;
         }
         if (selectedFramesSizes < size){
-            
+
             if (frames.frames[x] != 0xff){
                 CurrentlyFine = true;
                 FramesSelected++;
@@ -79,7 +79,7 @@ static block FindEmptyBlocks(u32 size){
     blockList.realSize = selectedFramesSizes;
     return blockList;
 }
-extern void 
+extern void
 physmem_init(){
     memset(frames_buffer,0,sizeof(char));
     frames.frameCount = FRAMES_COUNT;
@@ -94,7 +94,7 @@ physmem_alloc(u32 size){
     if ( block.flag == 1 || block.amount == 0 || block.start == -1){
         return NULL;
     }
-    else{  
+    else{
         tracef("> Allocating [%d] blocks\n", block.amount)
         tracef("> Allocating [%d] bytes\n", block.realSize);
         tracef("> Start block offset: [%d]\n", block.start);
@@ -105,7 +105,7 @@ physmem_alloc(u32 size){
         return addr;
     }
 }
-extern void 
+extern void
 physmem_free(u32 addr){
     tracef("> Freeing address [%d]\n", addr);
     emptyBlock(addr);

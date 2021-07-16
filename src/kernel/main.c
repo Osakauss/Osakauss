@@ -9,8 +9,12 @@
 #include <kernel/log.h>
 #include <kernel/input.h>
 #include <kernel/drivers/graphics/framebuffer.h>
-#include <kernel/mm/phys.h>
-u8 stack[16000];
+#include <kernel/mem/phys.h>
+#include <kernel/mem/mm.h>
+#include <kernel/mem/paging.h>
+
+
+u8 stack[16000] = {0};
 
 
 static struct stivale2_header_tag_framebuffer framebuffer_header_tag =
@@ -19,8 +23,8 @@ static struct stivale2_header_tag_framebuffer framebuffer_header_tag =
         .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
         .next = 0
     },
-    .framebuffer_width  = 0,
-    .framebuffer_height = 0,
+    .framebuffer_width  = 800,
+    .framebuffer_height = 600,
     .framebuffer_bpp    = 32
 };
 
@@ -41,12 +45,13 @@ void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id) {
     }
 }
 
-bool init(struct stivale2_struct *stivale2_struct){
+bool init(struct stivale2_struct *bootInfo){
 
     struct stivale2_struct_tag_framebuffer *framebuffer_tag;
+    struct stivale2_struct_tag_memmap *memmap;
 
-    framebuffer_tag = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
-
+    framebuffer_tag = stivale2_get_tag(bootInfo, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+    memmap = stivale2_get_tag(bootInfo, STIVALE2_STRUCT_TAG_MEMMAP_ID);
     framebufferInit(framebuffer_tag->framebuffer_addr,framebuffer_tag->framebuffer_addr, framebuffer_tag->framebuffer_width,framebuffer_tag->framebuffer_height,framebuffer_tag->framebuffer_bpp,framebuffer_tag->framebuffer_pitch);
 
     require_log(LOG_BOTH);
@@ -54,12 +59,15 @@ bool init(struct stivale2_struct *stivale2_struct){
     trace = true;
 
     logf("   ...:::   osakauss v0.0.0  :::...\n\n");
+
+    
     gdtInit();
     IDTInit();
     ISRInit();
     enable_interrupts();
     require_input(INPUT_BOTH);
     physmem_init();
+    mmInit(memmap);
 
     return true;
 }
@@ -88,9 +96,9 @@ void main(struct stivale2_struct *stivale2_struct) {
 
     char * hello = physmem_alloc(0x800);
 
+    //char * he = allocPages(1);
+
     physmem_free(hello);
-
-
 
     char * buf = physmem_alloc(0x1000);
 
@@ -100,7 +108,7 @@ void main(struct stivale2_struct *stivale2_struct) {
 
     input_readln(buf);
 
-    logf("\nyour input = %s\n",buf);
+    logf("\nyour input = [%s]\n",buf);
     physmem_free(buf);
 
     for (;;){

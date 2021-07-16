@@ -11,6 +11,7 @@ static void  init_cursor(void);
 static void update_cursor();
 
 
+
 struct Sconsole{
 	u32 offset_x;
 	u32 offset_y;
@@ -72,14 +73,27 @@ bool console_require()
 
 void putch(char c)
 {
-
-
-
 	if (c == '\n'){
 		console.row += BITMAP_SIZE+1;
 		console.offset_y++;
 		console.column=0;
 		console.offset_x = 0;
+	}
+	else if(c == '\002'){
+		struct framebuffer_pixel color = {28,17,175};
+		console.color = color;
+	}
+	else if (c == '\001'){
+		struct framebuffer_pixel color = {255,255,255};
+		console.color = color;
+	}
+	else if (c == '\003'){
+		struct framebuffer_pixel color = {175,17,22};
+		console.color = color;
+	}
+	else if(c == '\004'){
+		struct framebuffer_pixel color = {37,204,17};
+		console.color = color;
 	}
 	else if( console.column >= console.width  - 2*BITMAP_SIZE){
 		putch('\n');
@@ -103,7 +117,7 @@ void putch(char c)
 					console.column -= BITMAP_SIZE+1;
 					--console.offset_x;
 					putch(' ');
-                    console.column -= BITMAP_SIZE+1;
+					console.column -= BITMAP_SIZE+1;
 					--console.offset_x;
 
 				}
@@ -126,6 +140,7 @@ void putch(char c)
 	}
 	scroll();
 	update_cursor(console.column,console.row);
+	
 }
 
 static void write(string s, u32 size)

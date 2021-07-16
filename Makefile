@@ -6,7 +6,7 @@ AS=nasm
 LD=ld
 OBJCOPY = objcopy
 QEMU=qemu-system-x86_64
-QEMUOPTIONS=-m 4096 -serial stdio -cdrom $(ISO_IMAGE) -no-reboot -no-shutdown
+QEMUOPTIONS=-m 4096M -serial stdio -cdrom $(ISO_IMAGE) -no-reboot -no-shutdown
 SRCDIR=src
 BUILDDIR=bin
 CFLAGS = -m64 -Wall -Wextra -O2 -pipe -g  -std=gnu99
@@ -15,7 +15,7 @@ INTERNALLDFLAGS := \
 	-m64 		\
 	-nostdlib -shared -no-pie -fno-pic -z max-page-size=0x1000 \
 	-T$(SRCDIR)/kernel/linker.ld    \
-	
+
 
 INTERNALCFLAGS  :=       \
 	-I $(SRCDIR)/include \
@@ -37,12 +37,12 @@ all: build
 build:	dirs $(KERNEL)
 
 
-$(KERNEL): $(OBJ) 
+$(KERNEL): $(OBJ)
 	$(CC) $(INTERNALLDFLAGS) $(OBJ) -o $@
 
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c 
-	$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@ 
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@
 $(BUILDDIR)/%.s.o: $(SRCDIR)/%.s
 	@echo $<
 	$(AS) $(ASFLAGS) $< -o $@
@@ -63,9 +63,9 @@ disk:  build
 	cp  $(KERNEL)  \
 		config/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin iso_root/
 ifeq ($(FIRMWARE),uefi)
-	mkdir iso_root/EFI; 
+	mkdir iso_root/EFI;
 	mkdir iso_root/EFI/BOOT;
-	cp limine/BOOTX64.EFI iso_root/EFI/BOOT; 
+	cp limine/BOOTX64.EFI iso_root/EFI/BOOT;
 endif
 	xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \

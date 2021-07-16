@@ -3,6 +3,16 @@
 
 #include <stdint.h>
 
+// Anchor for non ELF kernels
+struct stivale2_anchor {
+    uint8_t anchor[15];
+    uint8_t bits;
+    uint64_t phys_load_addr;
+    uint64_t phys_bss_start;
+    uint64_t phys_bss_end;
+    uint64_t phys_stivale2hdr;
+} __attribute__((__packed__));
+
 struct stivale2_tag {
     uint64_t identifier;
     uint64_t next;
@@ -17,6 +27,13 @@ struct stivale2_header {
     uint64_t flags;
     uint64_t tags;
 } __attribute__((__packed__));
+
+#define STIVALE2_HEADER_TAG_ANY_VIDEO_ID 0xc75c9fa92a44c4db
+
+struct stivale2_header_tag_any_video {
+    struct stivale2_tag tag;
+    uint64_t preference;
+} __attribute__((packed));
 
 #define STIVALE2_HEADER_TAG_FRAMEBUFFER_ID 0x3ecc1bc43d0f7971
 
@@ -119,6 +136,17 @@ struct stivale2_struct_tag_edid {
     uint8_t  edid_information[];
 } __attribute__((__packed__));
 
+#define STIVALE2_STRUCT_TAG_TEXTMODE_ID 0x38d74c23e0dca893
+
+struct stivale2_struct_tag_textmode {
+    struct stivale2_tag tag;
+    uint64_t address;
+    uint16_t unused;
+    uint16_t rows;
+    uint16_t cols;
+    uint16_t bytes_per_char;
+} __attribute__((packed));
+
 #define STIVALE2_STRUCT_TAG_FB_MTRR_ID 0x6bc1a78ebe871172
 
 #define STIVALE2_STRUCT_TAG_TERMINAL_ID 0xc2b3f4c3233b0974
@@ -129,6 +157,7 @@ struct stivale2_struct_tag_terminal {
     uint16_t cols;
     uint16_t rows;
     uint64_t term_write;
+    uint64_t max_length;
 } __attribute__((__packed__));
 
 #define STIVALE2_STRUCT_TAG_MODULES_ID 0x4b6fe466aade04ce
