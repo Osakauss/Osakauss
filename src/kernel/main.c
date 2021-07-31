@@ -44,7 +44,7 @@ void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id) {
         current_tag = (void *)current_tag->next;
     }
 }
-
+/*
 bool init(struct stivale2_struct *bootInfo){
 
     struct stivale2_struct_tag_framebuffer *framebuffer_tag;
@@ -85,32 +85,11 @@ static struct stivale2_header stivale_hdr = {
 };
 
 
+*/
 
 
 
-
-void main(struct stivale2_struct *stivale2_struct) {
-    init(stivale2_struct);
-
-
-
-    char * hello = physmem_alloc(0x800);
-
-    //char * he = allocPages(1);
-
-    physmem_free(hello);
-
-    char * buf = physmem_alloc(0x1000);
-
-    memset(buf,0,0x1000);
-
-    logf("\ninput > ");
-
-    input_readln(buf);
-
-    logf("\nyour input = [%s]\n",buf);
-    physmem_free(buf);
-
+void main() {
     for (;;){
         asm volatile("hlt");
     }

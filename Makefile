@@ -1,5 +1,6 @@
-KERNEL := kernel.elf
+KERNEL := kernel
 ISO_IMAGE = disk.iso
+DISK=Primum/disk.img
 FIRMWARE=legacy
 CC := gcc
 AS=nasm
@@ -48,7 +49,7 @@ $(BUILDDIR)/%.s.o: $(SRCDIR)/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 clean:
-	rm -rf $(BUILDDIR) $(ISO_IMAGE) $(KERNEL) iso_root
+	rm -rf $(BUILDDIR) $(ISO_IMAGE) $(KERNEL) disk
 dirs:
 	@mkdir -p $(BUILDDIR)
 	@cd $(SRCDIR) \
@@ -58,31 +59,19 @@ dirs:
 
 
 disk:  build
-	rm -rf iso_root
-	mkdir -p iso_root
-	cp  $(KERNEL)  \
-		config/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin iso_root/
-ifeq ($(FIRMWARE),uefi)
-	mkdir iso_root/EFI;
-	mkdir iso_root/EFI/BOOT;
-	cp limine/BOOTX64.EFI iso_root/EFI/BOOT;
-endif
-	xorriso -as mkisofs -b limine-cd.bin \
-		-no-emul-boot -boot-load-size 4 -boot-info-table \
-		--efi-boot limine-eltorito-efi.bin \
-		-efi-boot-part --efi-boot-image --protective-msdos-label \
-		iso_root -o $(ISO_IMAGE)
+	-@mkdir -p disk
+	-@mkdir -p disk/EFI && mkdir disk/EFI/Boot
+	-@cp Primum/BOOTX64.EFI disk/EFI/Boot/
+	-@cp kernel disk/
+	-@cp primum.cfg disk/
+	@python3 Primum/imgbuilder.py disk $(DISK) 
 
-
-	@#dd if=/dev/zero of=test.img count=50 bs=512
-	@#mformat -i test.img -f 2880 ::
-	@#mcopy -i test.img $(KERNEL) :: # the kernel
-	@#mcopy -i test.img config/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-eltorito-efi.bin ::
-
-	limine/limine-install $(ISO_IMAGE)
-	rm -rf iso_root
+	
 run: disk
-	$(QEMU) $(QEMUOPTIONS)
+	qemu-system-x86_64 -drive format=raw,unit=0,file=$(DISK) -bios Primum/bios64.bin -m 256M -vga std -name Primum -machine q35
+	@#$(QEMU) $(QEMUOPTIONS)
+
+
 run-dbg: disk $(BUILDDIR)/kernel/kernel.dbg
 	$(QEMU) $(QEMUOPTIONS) -s -S &
 	@sleep 1
