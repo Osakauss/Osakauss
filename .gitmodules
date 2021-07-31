@@ -1,0 +1,3 @@
+[submodule "Primum"]
+	path = Primum
+	url = https://github.com/Osakuass/Primum.git
