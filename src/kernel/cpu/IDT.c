@@ -1,4 +1,4 @@
-#include <kernel/IDT.h>
+#include <kernel/cpu/IDT.h>
 #include <x86.h>
 
 
@@ -159,7 +159,7 @@ IDTLoad(){
     asm volatile("lidt %0" :: "m"( idtp ) : "memory");
 }
 static void
-IDTFlush(struct IDTPtr *_idtp){
+IDTFlush(){
     asm volatile("lidt %0" :: "m"( idtp ) : "memory");
 }
 
@@ -201,6 +201,6 @@ PicRemap(void)
 static void 
 FillPreIdt(){
     for (u32 i = 0; i < 256; i++){
-        IDTSetGate( i, empty_stub, 0x8E);
+        IDTSetGate( i, (u64)empty_stub, 0x8E);
     }
 }

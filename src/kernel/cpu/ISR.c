@@ -1,4 +1,4 @@
-#include <kernel/IRQ.h>
+#include <kernel/cpu/IRQ.h>
 #include <x86.h>
 #include <libs/stdlib.h>
 #include <kernel/log.h>

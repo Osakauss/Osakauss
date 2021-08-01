@@ -9,7 +9,7 @@ static struct frame frames;
 
 static u8 frames_buffer[0x800] = {0};
 
-extern end;
+extern int end;
 
 u64 physmem_base = (u64) &end;
 block blocks_;
@@ -32,9 +32,8 @@ fillBlock(block block){
     frames.blocks[block.amount].end = block.end;
 }
 static block FindEmptyBlocks(u32 size){
-    int blocks = 0;
     block empty = {0,0, .flag = 1};
-    int selectedFramesSizes = 0;
+    u32 selectedFramesSizes = 0;
     bool CurrentlyFine = false;
     u32 FramesSelected = 0;
     u32 rotations = 0;
@@ -56,7 +55,8 @@ static block FindEmptyBlocks(u32 size){
             else{
                 if (CurrentlyFine == true){
                     if (frames.frames[x-1] == 0xff){
-                        frames.frames[x-1] == 0;
+                        frames.frames[x-1] = 0;
+
                         if (FramesSelected !=  0){
                             blockList.start = 0;
                         }
@@ -88,7 +88,7 @@ physmem_init(){
     if (physmem_base & 0xfff) physmem_base += 0x1000;
 	physmem_base &= 0xfffff000;
 }
-extern void*
+extern u32
 physmem_alloc(u32 size){
     block block =  FindEmptyBlocks(size);
     if ( block.flag == 1 || block.amount == 0 || block.start == -1){

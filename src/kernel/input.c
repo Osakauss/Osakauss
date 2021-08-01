@@ -1,4 +1,6 @@
 #include <kernel/drivers/serial.h>
+#include <kernel/drivers/console.h>
+#include <kernel/drivers/serial.h>
 #include <kernel/input.h>
 #include <types.h>
 #include <kernel/log.h>

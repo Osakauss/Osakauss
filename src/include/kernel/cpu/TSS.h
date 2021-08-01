@@ -4,7 +4,7 @@
 
 //The tss code is in kernel/GDT.c
 
-struct STSS{
+struct __attribute__((packed)) STSS {
     u32 reserved;
     u64 rsp0;
     u64 rsp1;
@@ -20,8 +20,9 @@ struct STSS{
     u64 reserved2;
     u16 reserved3;
     u16 iopb; // IOPB Offset
-}TSS __attribute__((packed));
+}TSS;
 
 
-static void TSSInit();
+extern void TSSInit();
+extern void TssFlush();
 #endif

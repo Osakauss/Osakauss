@@ -18,4 +18,5 @@ struct IDTPtr {
 }__attribute((packed));
 
 bool IDTInit();
+void IDTSetGate(u32, u64, u8);
 #endif

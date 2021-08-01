@@ -6,15 +6,13 @@ CC := gcc
 AS=nasm
 LD=ld
 OBJCOPY = objcopy
-QEMU=qemu-system-x86_64
-QEMUOPTIONS=-m 4096M -serial stdio -cdrom $(ISO_IMAGE) -no-reboot -no-shutdown
 SRCDIR=src
 BUILDDIR=bin
 CFLAGS = -m64 -Wall -Wextra -O2 -pipe -g  -std=gnu99
 ASFLAGS =-f elf64 -I$(SRCDIR)include/assembly
 INTERNALLDFLAGS := \
 	-m64 		\
-	-nostdlib -shared -no-pie -fno-pic -z max-page-size=0x1000 \
+	-nostdlib -static -Bsymbolic -no-pie -fno-pic -z max-page-size=0x1000 \
 	-T$(SRCDIR)/kernel/linker.ld    \
 
 
@@ -35,21 +33,25 @@ OBJ  += $(patsubst $(SRCDIR)/%.s,$(BUILDDIR)/%.s.o,$(ASMFILES))
 
 all: build
 
-build:	dirs $(KERNEL)
+build:	dirs Primum-build $(KERNEL)
 
 
 $(KERNEL): $(OBJ)
-	$(CC) $(INTERNALLDFLAGS) $(OBJ) -o $@
+	@echo [$(CC)][LINKING ALL]
+	@$(CC) $(INTERNALLDFLAGS) $(OBJ) -o $@
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@
+	@echo [$(CC)][$<]
+	@$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@
 $(BUILDDIR)/%.s.o: $(SRCDIR)/%.s
-	@echo $<
-	$(AS) $(ASFLAGS) $< -o $@
+	@echo [$(AS)][$<]
+	@$(AS) $(ASFLAGS) $< -o $@
 
 clean:
-	rm -rf $(BUILDDIR) $(ISO_IMAGE) $(KERNEL) disk
+	-@rm -rf $(BUILDDIR) $(ISO_IMAGE) $(KERNEL) disk
+	-@cd Primum && make clean
+	-@mdeltree -i $(DISK) ::
 dirs:
 	@mkdir -p $(BUILDDIR)
 	@cd $(SRCDIR) \
@@ -63,19 +65,17 @@ disk:  build
 	-@mkdir -p disk/EFI && mkdir disk/EFI/Boot
 	-@cp Primum/BOOTX64.EFI disk/EFI/Boot/
 	-@cp kernel disk/
-	-@cp primum.cfg disk/
+	-@cp meta/bootloader/Primum/config/primum.cfg disk/
 	@python3 Primum/imgbuilder.py disk $(DISK) 
 
-	
-run: disk
-	qemu-system-x86_64 -drive format=raw,unit=0,file=$(DISK) -bios Primum/bios64.bin -m 256M -vga std -name Primum -machine q35
-	@#$(QEMU) $(QEMUOPTIONS)
-
-
-run-dbg: disk $(BUILDDIR)/kernel/kernel.dbg
-	$(QEMU) $(QEMUOPTIONS) -s -S &
-	@sleep 1
-	@gdb -x ./qemu.dbg
 
 $(BUILDDIR)/kernel/kernel.dbg: $(KERNEL)
 	@$(OBJCOPY) --only-keep-debug $< $@
+
+
+
+Primum-build:
+	@cd Primum && make
+
+
+include meta/vm/qemu/*.mk

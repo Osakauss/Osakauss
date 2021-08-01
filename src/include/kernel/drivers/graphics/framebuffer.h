@@ -6,23 +6,22 @@ struct framebuffer_pixel
     u8 blue;
     u8 green;
     u8 red;
-    u8 __unused;
+    u8 alpha;
 }__attribute__((packed));
 
 struct Sframebuffer{
-    u64 addr;
+    u64* addr;
     u8* buffer;
-    u16 width;
-    u16 height;
+    u32 width;
+    u32 height;
     struct framebuffer_pixel color;
-    u16 pitch;
-    u16 bpp;
+    u32 ppsl;
     u8* backBuffer;
 };
 
-extern void PutPixel(u16, u16, struct framebuffer_pixel);
-extern void framebufferInit(u64 addr,struct framebuffer_pixel*, u16,u16,u16,u16);
-extern struct framebuffer_pixel GeneratePixelFG(u8 red, u8 green, u8 blue);
+extern void PutPixel(u32, u32, struct framebuffer_pixel);
+extern void framebufferInit(u64 *, u32,u32,u32);
+extern struct framebuffer_pixel GeneratePixelFG(u32);
 extern void SetFramebufferColor(struct framebuffer_pixel pixel);
 
 #endif

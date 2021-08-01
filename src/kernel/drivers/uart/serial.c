@@ -1,7 +1,7 @@
 #include <x86.h>
 #include <kernel/drivers/serial.h>
-#include <kernel/ISR.h>
-#include <kernel/IRQ.h>
+#include <kernel/cpu/ISR.h>
+#include <kernel/cpu/IRQ.h>
 #include <kernel/log.h>
 #include <libs/stdlib.h>
 #include <kernel/input.h>

@@ -4,22 +4,22 @@
 
 
 typedef struct{
-    u32 amount;
-    u32 start;
-    u32 end;
-    u32 realSize;
-    u32 flag;
+    i32 amount;
+    i32 start;
+    i32 end;
+    i32 realSize;
+    i32 flag;
 }block;
 
 
 struct frame{
     u8 *frames;
-    u32 frameCount;
+    i32 frameCount;
     block *blocks;
 };
 
 
 extern void physmem_init();
-extern void *physmem_alloc(u32);
+extern u32 physmem_alloc(u32);
 extern void physmem_free(u32);
 #endif

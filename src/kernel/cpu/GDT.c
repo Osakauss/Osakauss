@@ -1,5 +1,5 @@
-#include <kernel/GDT.h>
-#include <kernel/TSS.h>
+#include <kernel/cpu/GDT.h>
+#include <kernel/cpu/TSS.h>
 
 __attribute__((aligned(0x1000)))
 
@@ -9,7 +9,7 @@ GDT DefaultGDT = {
     {0, 0, 0, 0x92, 0xa0, 0}, // kernel data segment
     {0, 0, 0, 0xFa, 0xa0, 0}, // user code segment
     {0, 0, 0, 0xF2, 0xa0, 0}, // user data segment
-    {sizeof(TSS), 0, 0, 0x89, 0x40,} // TSS
+    {sizeof(TSS), 0, 0, 0x89, 0x40, 0} // TSS
 };
 
 GDTDescriptor gdtDescriptor = {};

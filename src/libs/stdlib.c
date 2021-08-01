@@ -48,7 +48,6 @@ void reverse(char *s)
 }
 
 char *  itob(int n,  int b){
-    char a;
     char *s = s;
     int i,j,sign;
 

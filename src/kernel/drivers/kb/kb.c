@@ -1,5 +1,5 @@
-#include <kernel/ISR.h>
-#include <kernel/IRQ.h>
+#include <kernel/cpu/ISR.h>
+#include <kernel/cpu/IRQ.h>
 #include <kernel/log.h>
 #include <x86.h>
 #include <kernel/input.h>
