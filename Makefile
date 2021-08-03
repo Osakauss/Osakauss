@@ -8,7 +8,7 @@ LD=ld
 OBJCOPY = objcopy
 SRCDIR=src
 BUILDDIR=bin
-CFLAGS = -m64 -Wall -Wextra -O2 -pipe -g  -std=gnu99
+CFLAGS = -m64 -Wall -Wextra -Werror -O2 -pipe -g  -std=gnu99
 ASFLAGS =-f elf64 -I$(SRCDIR)include/assembly
 INTERNALLDFLAGS := \
 	-m64 		\
@@ -19,7 +19,7 @@ INTERNALLDFLAGS := \
 INTERNALCFLAGS  :=       \
 	-I $(SRCDIR)/include \
 	-m64				\
-	-nostdlib -ffreestanding -mcmodel=kernel -fno-builtin -fno-stack-protector -fno-pic -mno-80387 -mno-mmx -mno-3dnow -mno-sse -mno-sse2 -mno-red-zone -mgeneral-regs-only
+	-nostdlib -ffreestanding -mcmodel=kernel -fno-builtin -fno-stack-protector -fno-pic -mno-80387 -mno-mmx -mno-3dnow -mno-sse -mno-sse2 -mno-red-zone
 
 CFILES  = $(shell find $(SRCDIR) -name '*.c')
 #OBJS   = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(COBJS))

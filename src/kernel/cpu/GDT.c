@@ -12,7 +12,7 @@ GDT DefaultGDT = {
     {sizeof(TSS), 0, 0, 0x89, 0x40, 0} // TSS
 };
 
-GDTDescriptor gdtDescriptor = {};
+GDTDescriptor gdtDescriptor;
 
 static void setupTSS(){
     u64 base = (u64) &TSS;

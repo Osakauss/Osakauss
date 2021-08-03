@@ -88,8 +88,8 @@ physmem_init(){
     if (physmem_base & 0xfff) physmem_base += 0x1000;
 	physmem_base &= 0xfffff000;
 }
-extern u32
-physmem_alloc(u32 size){
+extern u64
+physmem_alloc(u64 size){
     block block =  FindEmptyBlocks(size);
     if ( block.flag == 1 || block.amount == 0 || block.start == -1){
         return NULL;
@@ -99,14 +99,14 @@ physmem_alloc(u32 size){
         tracef("> Allocating [%d] bytes\n", block.realSize);
         tracef("> Start block offset: [%d]\n", block.start);
         tracef("> End block offset: [%d]\n", block.end)
-        u32 addr = physmem_base + block.amount * 0x1000;
+        u64 addr = physmem_base + block.amount * 0x1000;
         tracef("> Allocated space addr [%d]\n", addr);
         fillBlock(block);
         return addr;
     }
 }
 extern void
-physmem_free(u32 addr){
+physmem_free(u64 addr){
     tracef("> Freeing address [%d]\n", addr);
     emptyBlock(addr);
 }

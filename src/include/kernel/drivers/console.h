@@ -1,4 +1,4 @@
-#ifndef __CONSOLE_HEADER_
+#ifndef __CONSOLE_HEADER__
 #define __CONSOLE_HEADER__
 #include <types.h>
 

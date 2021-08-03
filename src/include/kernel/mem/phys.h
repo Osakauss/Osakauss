@@ -20,6 +20,6 @@ struct frame{
 
 
 extern void physmem_init();
-extern u32 physmem_alloc(u32);
-extern void physmem_free(u32);
+extern u64 physmem_alloc(u64);
+extern void physmem_free(u64);
 #endif

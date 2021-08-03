@@ -12,6 +12,7 @@
 
 #include <kernel/input.h>
 
+#include <kernel/mem/phys.h>
 
 bool init(LETTRE_PROTOCAL *lettre){
 
@@ -32,9 +33,7 @@ bool init(LETTRE_PROTOCAL *lettre){
     ISRInit();
     enable_interrupts();
     require_input(INPUT_BOTH);
-    //physmem_init();
-    //mmInit(memmap);
-
+    physmem_init();
     return true;
 }
 
@@ -43,6 +42,10 @@ bool init(LETTRE_PROTOCAL *lettre){
 
 void main(LETTRE_PROTOCAL *lettre) {
     init(lettre);
+    u64 stuff = physmem_alloc(1);
+    u64 l;
+    l = stuff;
+    stuff = l;
     for (;;){
         asm volatile("hlt");
     }

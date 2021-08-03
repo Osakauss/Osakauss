@@ -82,3 +82,58 @@ static inline
 void IOWait(){
   outb(0x80,0x00);
 }
+
+static inline u64 
+rCR0() {
+    u64 ret;
+    __asm__ __volatile__("mov %%cr0, %0" : "=r"(ret));
+    return ret;
+}
+
+static inline u64 
+rCR2() {
+    u64 ret;
+    __asm__ __volatile__("mov %%cr2, %0" : "=r"(ret));
+    return ret;
+}
+
+static inline u64 
+rCR3() {
+    u64 ret;
+    __asm__ __volatile__("mov %%cr3, %0" : "=r"(ret));
+    return ret;
+}
+
+static inline u64 
+rCR4() {
+    u64 ret;
+    __asm__ __volatile__("mov %%cr4, %0" : "=r"(ret));
+    return ret;
+}
+
+static inline u64 
+rCR8() {
+   u64 ret;
+    __asm__ __volatile__("mov %%cr8, %0" : "=r"(ret));
+    return ret;
+}
+
+static inline void 
+wCR0(u64 val) {
+    __asm__ __volatile__("mov %0, %%cr0" :: "r"(val));
+}
+
+static inline void 
+wCR3(u64 val) {
+    __asm__ __volatile__("mov %0, %%cr3" :: "r"(val));
+}
+
+static inline void 
+wCR4(u64 val) {
+    __asm__ __volatile__("mov %0, %%cr4" :: "r"(val));
+}
+
+static inline void 
+wCR8(u64 val) {
+    __asm__ __volatile__("mov %0, %%cr8" :: "r"(val));
+}
