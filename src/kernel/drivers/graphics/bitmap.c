@@ -13,7 +13,7 @@ static void DrawAlphaBitmap(u16 index, u32 x, u32 y, struct framebuffer_pixel pi
 {
   u16 temp = 0, pix = 0;
   int one = 1;
-  struct framebuffer_pixel black_pixel = GeneratePixelFG(0xff000000);
+  struct framebuffer_pixel black_pixel = GeneratePixelFG(0,0,0);
   for(u8 i = 0; i < BITMAP_SIZE; i++){
     temp = x;
     x += BITMAP_SIZE;

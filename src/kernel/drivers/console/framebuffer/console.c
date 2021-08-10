@@ -47,7 +47,7 @@ scroll(void)
 	if(console.row >= console.height-2*BITMAP_SIZE-2)
 	{
 		// I literally have no idea why it needs to be multiplied by 4, just did some testing and it works.
-		//memcpy(framebuffer.buffer, &framebuffer.addr[4] * (BITMAP_SIZE+1)], (console.height-((BITMAP_SIZE)+1)));
+		memcpy(framebuffer.buffer, &framebuffer.buffer[4*((framebuffer.pitch)/4) * (BITMAP_SIZE+1)], (framebuffer.pitch)*(console.height-((BITMAP_SIZE)+1)));
 		console.row -= BITMAP_SIZE+1;
 		--console.offset_y;
 
@@ -63,7 +63,7 @@ bool console_require()
 	console.width = framebuffer.width;
 	console.row = 0;
 	console.column = 0;
-    console.color = GeneratePixelFG(0XFFFFFFFF);
+    console.color = GeneratePixelFG(0xff,0xff,0xff);
 	init_cursor();
 	return true;
 }
@@ -80,19 +80,19 @@ void putch(char c)
 		console.offset_x = 0;
 	}
 	else if(c == '\002'){
-		struct framebuffer_pixel color = GeneratePixelFG(0xffFF11FF);
+		struct framebuffer_pixel color = GeneratePixelFG(0xFF, 0x11, 0xFF);
 		console.color = color;
 	}
 	else if (c == '\001'){
-		struct framebuffer_pixel color = GeneratePixelFG(0XFFFFFFFF);
+		struct framebuffer_pixel color = GeneratePixelFG(0xFF, 0xFF, 0xFF);
 		console.color = color;
 	}
 	else if (c == '\003'){
-		struct framebuffer_pixel color = GeneratePixelFG (0xFFAF1116);
+		struct framebuffer_pixel color = GeneratePixelFG (0xAF,0x11,0x16);
 		console.color = color;
 	}
 	else if(c == '\004'){
-		struct framebuffer_pixel color = GeneratePixelFG(0xFF25CC11);
+		struct framebuffer_pixel color = GeneratePixelFG(0x25,0xCC,0x11);
 		console.color = color;
 	}
 	else if( console.column >= console.width  - 2*BITMAP_SIZE){

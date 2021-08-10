@@ -1,25 +1,27 @@
-/* Tell the linker that we want the symbol _start to be our entry point */
-OUTPUT_FORMAT(elf64-x86-64)
 ENTRY(main)
 
 SECTIONS
 {
-    .text : ALIGN(0x1000)
-	{
-		*(.text)
-	}
-	.data : ALIGN(0x1000)
-	{
-		*(.data)
-	}
-	.rodata : ALIGN(0x1000)
-	{
-		*(.rodata)
-	}
-	.bss : ALIGN(0x1000)
-	{
-		*(COMMON)
-		*(.bss)
-	}
+
+    . = 0xffffffff80200000;
+
+    .stivale2hdr : {
+        KEEP(*(.stivale2hdr))
+    }
+
+    .text : {
+        *(.text*)
+    }
+    .rodata : {
+        *(.rodata*)
+    }
+    .data : {
+        *(.data*)
+    }
+
+    .bss : {
+        *(COMMON)
+        *(.bss*)
+    }
     end = .; _end = .; __end = .;
 }
