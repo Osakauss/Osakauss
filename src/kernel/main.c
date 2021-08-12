@@ -76,9 +76,25 @@ bool init(struct stivale2_struct *stivale2_info){
     IDTInit();
     ISRInit();
     enable_interrupts();
-    require_input(INPUT_BOTH);
+
     pmmInit(memmap);
+
+    require_input(INPUT_BOTH);
+
+
     return true;
+}
+
+void main(struct stivale2_struct * stivale2_info) {
+    init(stivale2_info);
+    int * i = (int *)pmm_alloc(0x2000);
+    int * i1 = (int *)pmm_alloc(0x2000);
+    pmm_free(i);
+    pmm_free(i1);
+    logf("[DONE]\n");
+    for (;;){
+        asm volatile("hlt");
+    }
 }
 
 
@@ -93,16 +109,3 @@ static struct stivale2_header stivale_hdr = {
 
     .tags = (uintptr_t)&framebuffer_header_tag
 };
-
-
-
-
-
-void main(struct stivale2_struct * stivale2_info) {
-    init(stivale2_info);
-    int * i = (int *)physmem_alloc(1);
-    logf("%x", i);
-    for (;;){
-        asm volatile("hlt");
-    }
-}

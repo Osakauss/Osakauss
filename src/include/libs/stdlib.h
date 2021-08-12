@@ -2,6 +2,14 @@
 #include <types.h>
 #include <stdarg.h>
 
+
+
+#define KERNEL_ERROR(msg) kernel_error(msg, __FILE__, __LINE__);
+
+
+extern void kernel_error (const char *msg, const char *file, u32 line);
+
+
 /* libs/stdlib.c */
 extern char *itoa(int value, char *str, int base);
 extern u32 digit_count(int num);
