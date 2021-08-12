@@ -12,8 +12,7 @@
 
 #include <kernel/input.h>
 
-#include <kernel/mem/phys.h>
-#include <kernel/mem/mm.h>
+#include <kernel/mem/pmm.h>
 
 u8 stack[16000];
 
@@ -68,7 +67,9 @@ bool init(struct stivale2_struct *stivale2_info){
 
     trace = true;
 
-    logf("   ...:::   osakauss v0.0.0  :::...\n\n");
+    logf("   ...:::   Osakauss v0.0.1  :::...\n\n");
+
+    logf("bootloader->[\04%s\01]\nbootloader-version->[\04%s\01]\n\n",stivale2_info->bootloader_brand,stivale2_info->bootloader_version);
 
 
     gdtInit();
@@ -76,8 +77,7 @@ bool init(struct stivale2_struct *stivale2_info){
     ISRInit();
     enable_interrupts();
     require_input(INPUT_BOTH);
-    physmem_init();
-    mmInit(memmap);
+    pmmInit(memmap);
     return true;
 }
 
@@ -100,10 +100,8 @@ static struct stivale2_header stivale_hdr = {
 
 void main(struct stivale2_struct * stivale2_info) {
     init(stivale2_info);
-    u64 stuff = physmem_alloc(1);
-    u64 l;
-    l = stuff;
-    stuff = l;
+    int * i = (int *)physmem_alloc(1);
+    logf("%x", i);
     for (;;){
         asm volatile("hlt");
     }

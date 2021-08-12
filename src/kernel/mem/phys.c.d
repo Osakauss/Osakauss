@@ -31,6 +31,7 @@ fillBlock(block block){
     frames.blocks[block.amount].start = block.start;
     frames.blocks[block.amount].end = block.end;
 }
+
 static block FindEmptyBlocks(u32 size){
     block empty = {0,0, .flag = 1};
     u32 selectedFramesSizes = 0;

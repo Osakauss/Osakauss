@@ -1,5 +1,5 @@
 QEMU=qemu-system-x86_64
-QEMUOPTIONS=-m 256M -serial stdio -cdrom $(ISO_IMAGE) -no-reboot -no-shutdown -d int
+QEMUOPTIONS=-m 256M -serial stdio -cdrom $(ISO_IMAGE) 
 
 run-qemu: build_disk
 	@$(QEMU) $(QEMUOPTIONS)

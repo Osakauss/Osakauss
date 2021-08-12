@@ -4,7 +4,7 @@
 #include <types.h>
 
 
-typedef int (*funcBitMap)(int num,int n);
+typedef int (*funcBitMap)(int num,u64 n);
 
 
 
@@ -16,13 +16,15 @@ typedef struct {
 
 struct BitMapS{
     BitMapfunctions BMF; // bitmap functions
-    int (*BitMapGetBit)(struct BitMapS* self,int k);
-    int (*BitMapSetBit)(struct BitMapS *self,int k);
-    int (*BitMapClrBit)(struct BitMapS* self,int k);
-    int (*BitMapNewSector)(struct BitMapS* self, int sector);
+    int (*BitMapGetBit)(struct BitMapS* self,u64 k);
+    int (*BitMapSetBit)(struct BitMapS *self,u64 k);
+    int (*BitMapClrBit)(struct BitMapS* self,u64 k);
+    int (*BitMapNewSector)(struct BitMapS* self, u64 sector);
     u32 *bitmap;
+    bool bitmap_setup;
+    u64 entries;
 };
 
-extern void BitMap(struct BitMapS *Bmp, u32 *bmp);
+extern void BitMap(struct BitMapS *Bmp);
 
 #endif

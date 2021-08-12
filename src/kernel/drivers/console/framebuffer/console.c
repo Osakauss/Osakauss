@@ -80,7 +80,7 @@ void putch(char c)
 		console.offset_x = 0;
 	}
 	else if(c == '\002'){
-		struct framebuffer_pixel color = GeneratePixelFG(0xFF, 0x11, 0xFF);
+		struct framebuffer_pixel color = GeneratePixelFG(0x24 ,0x2D, 0xD8);
 		console.color = color;
 	}
 	else if (c == '\001'){
@@ -140,7 +140,7 @@ void putch(char c)
 	}
 	scroll();
 	update_cursor(console.column,console.row);
-	
+
 }
 
 static void write(string s, u32 size)
