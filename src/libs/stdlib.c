@@ -1,5 +1,7 @@
 #include <types.h>
 #include <libs/stdlib.h>
+#include <kernel/log.h>
+#include <x86.h>
 
 char * itoa( int value, char * str, int base )
 {
@@ -65,9 +67,9 @@ char *  itob(int n,  int b){
 
     if(sign < 0)
         s[i++]='-';
-    
+
     s[i]='\0';
-    
+
     reverse(s);
     return s;
 }
@@ -152,3 +154,10 @@ char *strdup(char *src)
     *p = '\0';
     return str;
 }*/
+
+extern void kernel_error (const char *msg, const char *file, u32 line){
+    __asm__ volatile("cli");
+    logf("\n[ERROR] file:\04%s\01: line:\04%d\1 : \02%s\01\n", file,line,msg);
+    hang();
+
+}
