@@ -2,9 +2,16 @@ KERNEL := kernel.elf
 ISO_IMAGE = Osakauss.iso
 ISO_DIR=disk
 FIRMWARE=legacy
-CC := gcc
+
+ifneq (,$(wildcard ./meta/toolchain/gcc/bin/x86_64-linux-gcc))
+	CC := ./meta/toolchain/gcc/bin/x86_64-linux-gcc
+endif
+
+ifneq (,$(wildcard ./meta/toolchain/gcc/bin/x86_64-elf-gcc))
+	CC := ./meta/toolchain/gcc/bin/x86_64-elf-gcc
+endif
+
 AS=nasm
-LD=ld
 OBJCOPY = objcopy
 SRCDIR=src
 BUILDDIR=bin
@@ -41,10 +48,10 @@ $(KERNEL): $(OBJ)
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
-	@echo [$(CC)][$<]
+	@echo "[$(CC)]===>[$<]"
 	@$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@
 $(BUILDDIR)/%.s.o: $(SRCDIR)/%.s
-	@echo [$(AS)][$<]
+	@echo "[$(AS)]===>[$<]"
 	@$(AS) $(ASFLAGS) $< -o $@
 
 clean:
@@ -63,3 +70,4 @@ $(BUILDDIR)/kernel/kernel.dbg: $(KERNEL)
 
 include meta/bootloader/limine/*.mk
 include meta/vm/qemu/*.mk
+include meta/toolchain/*.mk

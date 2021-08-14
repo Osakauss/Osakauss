@@ -62,7 +62,7 @@ extern void irq15();
 
 extern void empty_stub();
 
-static void IDTFlush(struct IDTPtr *);
+static void IDTFlush();
 static void IDTLoad();
 static void PicRemap(void);
 static void FillPreIdt();
@@ -133,7 +133,7 @@ ISRInit(){
 
 extern void
 IDTSetGate(u32 num, u64 base, u8 type_attr)
-{   
+{
     _idt[num].reserved = 0;
     _idt[num].offset_low = (u16)((base));
     _idt[num].offset_mid = (u16)((base) >> 16);
@@ -145,7 +145,7 @@ IDTSetGate(u32 num, u64 base, u8 type_attr)
 
 
 
-bool 
+bool
 IDTInit(){
     idtp.limit = (u16)(sizeof(struct IDT) * 256) - 1;
     idtp.base = (u64)&_idt;
@@ -154,7 +154,7 @@ IDTInit(){
     return true;
 }
 
-static void 
+static void
 IDTLoad(){
     asm volatile("lidt %0" :: "m"( idtp ) : "memory");
 }
@@ -189,7 +189,7 @@ PicRemap(void)
     outb(0xA1, 0xff);
     IOWait();
     */
-   
+
     // Enables all interrupts from PIC for now
     outb(0x21, 0x0);
     IOWait();
@@ -198,7 +198,7 @@ PicRemap(void)
 }
 
 
-static void 
+static void
 FillPreIdt(){
     for (u32 i = 0; i < 256; i++){
         IDTSetGate( i, (u64)empty_stub, 0x8E);
