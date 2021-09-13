@@ -1,6 +1,6 @@
 #include <kernel/cpu/IRQ.h>
 #include <x86.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 #include <kernel/log.h>
 
 

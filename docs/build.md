@@ -1,5 +1,7 @@
 # How to build Osakauss kernel
 
+
+# Building with gcc
 ## You will need
  - gcc
  - nasm
@@ -39,3 +41,28 @@ if you want to run and build it then use
 make run-qemu
 ```
 that will build and run the kernel
+
+# Building with clang
+
+## You will need
+- clang
+- nasm
+- gnu make
+
+## If you want to run it you will also need
+ - qemu-system-x86_64
+
+## Get the code
+  ```
+  git clone --recursive https://github.com/Osakuass/Osakauss.git
+ ```
+## Building the kernel
+```
+make TOOLCHAIN=clang build
+```
+if you want to run and build it then use
+```
+make TOOLCHAIN=clang run-qemu
+```
+that will build and run the kernel
+

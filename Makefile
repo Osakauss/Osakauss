@@ -1,7 +1,13 @@
 KERNEL := kernel.elf
 ISO_IMAGE = Osakauss.iso
+RAMDISK=initrd.tar
 ISO_DIR=disk
 FIRMWARE=legacy
+
+TOOLCHAIN=gcc
+
+
+ifeq ($(TOOLCHAIN), gcc)
 
 ifneq (,$(wildcard ./meta/toolchain/gcc/bin/x86_64-linux-gcc))
 	CC := ./meta/toolchain/gcc/bin/x86_64-linux-gcc
@@ -11,17 +17,33 @@ ifneq (,$(wildcard ./meta/toolchain/gcc/bin/x86_64-elf-gcc))
 	CC := ./meta/toolchain/gcc/bin/x86_64-elf-gcc
 endif
 
+LD :=$(CC)
+
+
+
+else ifeq ($(TOOLCHAIN), clang)
+	CC := clang
+	LD := $(CC)
+else
+	CC := clang
+	LD := $(CC)
+
+
+endif
+
 AS=nasm
 OBJCOPY = objcopy
 SRCDIR=src
 BUILDDIR=bin
 CFLAGS = -m64 -Wall -Wextra -Werror -O2 -pipe -g  -std=gnu99
 ASFLAGS =-f elf64 -I$(SRCDIR)include/assembly
-INTERNALLDFLAGS := \
-	-m64 		\
+LDFLAGS := \
 	-nostdlib -static -Bsymbolic -no-pie -fno-pic -z max-page-size=0x1000 \
 	-T$(SRCDIR)/kernel/linker.ld    \
 
+ifeq ($(TOOLCHAIN), clang)
+	LDFLAGS += -fuse-ld=ld
+endif
 
 INTERNALCFLAGS  :=       \
 	-I $(SRCDIR)/include \
@@ -44,7 +66,7 @@ build:	dirs $(KERNEL)
 
 $(KERNEL): $(OBJ)
 	@echo [$(CC)][LINKING ALL]
-	@$(CC) $(INTERNALLDFLAGS) $(OBJ) -o $@
+	@$(LD) $(LDFLAGS) $(OBJ) -o $@
 
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
@@ -70,4 +92,4 @@ $(BUILDDIR)/kernel/kernel.dbg: $(KERNEL)
 
 include meta/bootloader/limine/*.mk
 include meta/vm/qemu/*.mk
-include meta/toolchain/*.mk
+include meta/toolchain/build-gcc-toolchain.mk

@@ -1,9 +1,9 @@
 #include <kernel/mem/pmm.h>
 #include <types.h>
 #include <kernel/log.h>
-#include <libs/BitMap.h>
-#include <libs/stdlib.h>
-#define VIRTUALMEM_BASE 0xffff800000000000
+#include <libs/bitmap.h>
+#include <libs/klibc.h>
+#define VIRTUALMEM_BASE 0
 #define BLOCK_SIZE 0x1000
 
 u64 start_address = 0, end_address = 0; // these are the starting and end addresses of the physical memory
@@ -20,7 +20,10 @@ enum MEMORY_STATS{
 
 };
 
-static bool pmm_alloc_ataddress(void* addr, u64 amount, int STATE);
+static bool pmm_alloc_ataddress(void*, u64, int);
+static u64 address2blockoffset(void *);
+
+
 
 static int SetBlock(u64 idx, int value){
     switch (value){
@@ -118,7 +121,7 @@ extern void pmmInit(struct stivale2_struct_tag_memmap *memmap){
 }
 
 static bool pmm_alloc_ataddress(void* addr, u64 amount, int STATE){ // this is only really needed for making sure that the bitmap is not written over. but could be used for more maybe later.
-    u64 block = ( ( (u64)addr / BLOCK_SIZE ) - VIRTUALMEM_BASE ) - 1; // make sure to take off 1 because we start from 0 not 1. we count like computers here
+    u64 block = address2blockoffset(addr); // make sure to take off 1 because we start from 0 not 1. we count like computers here
     int block_status = 0;
     u64 entries = 0;
     for (u64 v = 0; v < amount/BLOCK_SIZE; v++){ // make sure that this space is actually usable, if not then we have to stop.
@@ -154,7 +157,7 @@ extern void * pmm_alloc(u64 amount){
                     f_free_section = true;
                 }
                 end = i;
-                amnt+=0x1000;
+                amnt+=BLOCK_SIZE;
                 break;
             default:
                 start = 0;
@@ -174,6 +177,7 @@ extern void * pmm_alloc(u64 amount){
     }
 
     block_entries[start] = block_count; // make sure that we keep track of how many blocks where used in this address
+    logf("Block amount->[%d]\nblock_offset>[%d]\n", block_count,(u32)start);
     u64 *address = (u64 *)(start_address + (start * BLOCK_SIZE)) + VIRTUALMEM_BASE; // calculate the memory address
     return (void *)address;
 }
@@ -182,9 +186,31 @@ extern void * pmm_alloc(u64 amount){
 
 extern void pmm_free(void *addr){ // i just know one day this thing is going to give me issues, i can feel it.
     // This will get the starting block that we will set FREE and all its friends that it was using.
-    u64 block = ( ( (u64)addr / BLOCK_SIZE ) - VIRTUALMEM_BASE ) - 1; // make sure to take off 1 because we start from 0 not 1. we count like computers here
+    u64 block = address2blockoffset(addr); // make sure to take off 1 because we start from 0 not 1. we count like computers here
+    logf("removing block->[%d]\naddress->[%d]\n", (u32)block,addr);
     // block_entries[(u32)block];. that will give us how many blocks that are used by that memory.
     for (u64 v = 0; v < (u64)block_entries[(u32)block]; v++){
         SetBlock(block+v,FREE); // set all the blocks to FREE so that we know that we are done with them
     }
+}
+
+
+
+void * pmm_realloc(void * ptr, u64 size){
+    void *ptr1 = pmm_alloc(size);
+    memcpy(ptr1, ptr, size);
+    pmm_free(ptr);
+    return ptr1;
+}
+
+void * pmm_calloc(u64 size){
+    void * ptr = pmm_alloc(size);
+    memset(ptr, 0, size);
+    return ptr;
+}
+
+
+static u64 address2blockoffset(void * addr){
+    u64 block = ( ( (u64)addr / BLOCK_SIZE ) - VIRTUALMEM_BASE);
+    return block-1;
 }

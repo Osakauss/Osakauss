@@ -5,7 +5,7 @@
 
 
 #define KERNEL_ERROR(msg) kernel_error(msg, __FILE__, __LINE__);
-
+#define UNUSED(x) (void)(x)
 
 extern void kernel_error (const char *msg, const char *file, u32 line);
 
@@ -23,3 +23,11 @@ extern void *memset(void*, u8, usize);
 /* libs/format.c */
 extern void format(void (*f)(char), const char *fmt, ...);
 extern void formatv(void (*f)(char), const char *fmt, va_list args);
+
+
+extern void strcpy(char * target, const char * src);
+extern int strcmp(const char *str, const char *str1);
+extern char *strdup(char *src);
+
+
+extern int oct2bin(char *str, int size);

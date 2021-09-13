@@ -4,7 +4,7 @@
 #include <x86.h>
 #include <kernel/input.h>
 #include <kernel/drivers/console.h>
-
+#include <libs/klibc.h>
 
 struct Skeyboard{
     bool capslock;
@@ -32,7 +32,7 @@ static char HandleScanCode(char scancode){
 extern void keyboard_handler(struct regs *r)
 {
     /* silent unused warning */
-    r = r;
+    UNUSED(r);
 
     unsigned char scancode;
     /* Read from the keyboard's data buffer */

@@ -1,5 +1,5 @@
 #include <types.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 #include <x86.h>
 #include <kernel/drivers/console.h>
 #include <kernel/drivers/graphics/bitmap.h>
@@ -105,7 +105,7 @@ void putch(char c)
 
 		}
 		else{
-				if (console.barrier == 0){
+				if (console.barrier[0] == 0 && console.barrier[1] == 0){
 					console.column -= BITMAP_SIZE+1;
 					--console.offset_x;
 					putch(' ');

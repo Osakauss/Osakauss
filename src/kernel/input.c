@@ -4,7 +4,7 @@
 #include <kernel/input.h>
 #include <types.h>
 #include <kernel/log.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 #include <kernel/drivers/kb.h>
 
 #define BUFFER_SIZE 2000 // size of tty screen 80*25

@@ -1,7 +1,7 @@
 #ifndef __SERIAL_HEADER__
 #define __SERIAL_HEADER__
 #include <types.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 
 /* kernel/serial.c */
 

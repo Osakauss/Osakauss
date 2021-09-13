@@ -1,4 +1,4 @@
-#include <libs/BitMap.h>
+#include <libs/bitmap.h>
 #include <kernel/log.h>
 int setBit_(int n, u64 k)
 {
@@ -90,25 +90,3 @@ extern void BitMap(struct BitMapS *Bmp){
 }
 
 
-/*
-int main()
-{
-    BitMap(&Bmp, &bmp_);
-
-    Bmp.bitmap[0] = 12;
-
-    int n  = Bmp.BitMapSetBit(&Bmp, 31);
-    int z=0;
-    Bmp.BitMapSetBit(&Bmp, 11);
-    Bmp.BitMapSetBit(&Bmp,31);
-    Bmp.BitMapGetBit(&Bmp,31);
-
-
-    for (int x = 0; x <= 31; x++){
-        z  = Bmp.BitMapGetBit(&Bmp,x);
-        printf("%d",z);
-    }
-
-    return 0;
-}
-*/

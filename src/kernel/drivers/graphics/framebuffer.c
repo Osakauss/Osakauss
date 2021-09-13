@@ -1,5 +1,5 @@
 #include <types.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 #include <kernel/drivers/graphics/framebuffer.h>
 
 

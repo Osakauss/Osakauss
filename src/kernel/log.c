@@ -1,8 +1,7 @@
 #include <kernel/log.h>
 #include <kernel/drivers/serial.h>
 #include <kernel/drivers/console.h>
-#include <libs/lambda.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 
 static struct {
 	u8 serial;  // serial logging enabled
@@ -34,18 +33,19 @@ require_log(enum logging_output output)
 	}
 }
 
+static void logfc(char c){ // logf print character
+	if (require_satisfied.console)
+			putch(c);
+	if (require_satisfied.serial)
+		serial_writeb(c);
+}
+
+
 extern void
 logf(const char *fmt, ...)
 {
 	va_list args;
-	
 	va_start(args, fmt);
-	void (*f)(char) = lambda(void, (char c) {
-		if (require_satisfied.console)
-			putch(c);
-		if (require_satisfied.serial)
-			serial_writeb(c);
-	});
-	formatv(f, fmt, args);
+	formatv(logfc, fmt, args);
 	va_end(args);
 }

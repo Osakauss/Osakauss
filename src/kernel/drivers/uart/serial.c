@@ -3,7 +3,7 @@
 #include <kernel/cpu/ISR.h>
 #include <kernel/cpu/IRQ.h>
 #include <kernel/log.h>
-#include <libs/stdlib.h>
+#include <libs/klibc.h>
 #include <kernel/input.h>
 #define PORT_COM1 0x03f8
 
@@ -36,7 +36,7 @@ is_transmit_empty(void)
 extern void handle_serial_in(struct regs *r)
 {
 	/* silence unused arg warning */
-	r = r;
+	UNUSED(r);
 
 	char c = (char)serial_readb();
 	switch ((int) c)
