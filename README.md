@@ -1,7 +1,7 @@
 # osakauss
 
-our super awesome kernel and user space system
+Our SUPER AWESOME😎 Kernel and User Space System.
 
 
 ## How to build
-read the [docs](https://github.com/Osakuass/Osakauss/blob/main/docs/build.md)
+Read the [docs](https://github.com/Osakuass/Osakauss/blob/main/docs/build.md)
