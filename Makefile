@@ -35,7 +35,7 @@ AS=nasm
 OBJCOPY = objcopy
 SRCDIR=src
 BUILDDIR=bin
-CFLAGS = -m64 -Wall -Wextra -Werror -O2 -pipe -g  -std=gnu99
+CFLAGS = -m64 -Wall -Wextra -Werror -O0 -pipe -g  -std=gnu99
 ASFLAGS =-f elf64 -I$(SRCDIR)include/assembly
 LDFLAGS := \
 	-nostdlib -static -Bsymbolic -no-pie -fno-pic -z max-page-size=0x1000 \

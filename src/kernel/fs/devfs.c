@@ -1,77 +1,48 @@
 #include <kernel/fs/devfs.h>
-#include <types.h>
-#include <kernel/fs/vfs.h>
 #include <kernel/mem/pmm.h>
 #include <libs/klibc.h>
 #include <kernel/log.h>
 
-typedef struct{
-    char *data;
-}devfs_file ;
+vfs_node *devfs_root;
 
-static int files = 0;
-devfs_file *devfs_root;
+void add_new_device(int device_id, char *name, int (*write)(struct vfs_node *, u32, u32, char *), 
+                    int (*read)(struct vfs_node *, u32, u32, char *)){
 
+    vfs_node* node = (vfs_node*)pmm_calloc(sizeof(vfs_node));
+    strcpy(node->name, name);
+    node->ops.write = write;
+    node->ops.read = read;
+    node->type = VFS_NODE_DEVICE;
+    node->device_id = device_id;
 
-static void add_new_file(){
-    devfs_root = pmm_realloc(devfs_root, sizeof(devfs_file) * files);
-    devfs_root[files].data = pmm_alloc(100);
-    files++;
-}
-
-
-
-
-int devfs_read(vfs_node *node, u32 size, u32 offset, char *buffer){
-    memcpy(buffer, devfs_root[node->offset].data+offset, size);
-    return offset;
-}
-
-int devfs_write(vfs_node *node , u32 size, u32 offset, char *data){
-    if (node->size < offset+size){
-        devfs_root[node->offset].data = pmm_realloc(devfs_root[node->offset].data, offset+size);
-        node->size = offset+size;
-    }
-    memcpy(devfs_root[node->offset].data+offset, data, size);
-    return offset;
-}
-
-int devfs_delfile(vfs_node *node){
-    memset(devfs_root[node->offset].data, 0, node->size);
-    return 1;
-}   
-
-
-int devfs_mkfile(vfs_node *parent, vfs_node *node, const char *name){
-    UNUSED(parent);
-    UNUSED(name);
-    add_new_file();
-    node->offset = files-1;
-    node->ops.write = devfs_write;
-    node->ops.read = devfs_read;
-    return 1;
+    vfs_add_node(devfs_root, node);
 }
 
 
 
 bool devfs_init(){
 
-    vfs_node *root = vfs_get_node("/");
+    vfs_node *root = vfs_get_dir("/");
 
-    vfs_node *dev = vfs_mkdir(root, "dev");
+    vfs_node *dev_mountpoint = vfs_mkdir(root, "dev");
 
-    devfs_root = pmm_alloc(sizeof(devfs_file));
+    vfs_node* dev_fs = pmm_calloc(sizeof(vfs_node));
 
-    if(dev == NULL){
+    if(dev_mountpoint == NULL || dev_fs == NULL){
         return false;
     }
+
+    dev_fs->children = (vfs_node**)pmm_calloc(sizeof(vfs_node));
+    dev_fs->children_count = 0;
+    dev_fs->type = VFS_NODE_DIRECTORY;
+    strcpy(dev_fs->name, "dev");
+
+
+    devfs_root = dev_fs;
+
+
+    vfs_mount(dev_mountpoint, dev_fs);
     
-    dev->ops.mkfile = devfs_mkfile;
-    dev->ops.delfile = devfs_delfile;
-
-    vfs_mkfile(dev, "crap");
-
-
 
     return true;
 

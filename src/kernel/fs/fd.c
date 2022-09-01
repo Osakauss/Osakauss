@@ -14,11 +14,11 @@ void fd_init(){
     dl_init(&fds);
 }
 
-
+/*
 static int new_fd(vfs_node *node){
     fds.push(&fds,node);
     return fds.total(&fds)-1;
-}
+}*/
 
 
 static void fd_remove(int fd){
@@ -44,12 +44,13 @@ int fd_write(int fd, int size, int offset, char* data){
 
 int fd_open(char *name){
 
-
-    vfs_node *node = vfs_get_node(name);
+    (void)name;
+    /*vfs_node *node = vfs_get_node(name);
 
     if (node == NULL){
         return -1;
-    }
+    }*/
 
-    return new_fd(node);;
+    //return new_fd(node);
+    return 0;
 }

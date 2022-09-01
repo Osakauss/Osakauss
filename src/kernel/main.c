@@ -98,53 +98,48 @@ bool init(struct stivale2_struct *stivale2_info){
 
     vfs_init();
 
-    vfs_node *root = vfs_get_node("/");
-    if (root == NULL){
-        KERNEL_ERROR("CANNOT FIND ROOT");
-    }
-
-    vfs_node *new_node = vfs_mkfile(root, "file.txt");
-    if(new_node == NULL){
-        logf("Not enough ram\n");
-        hang();
-    }
-
-
-
     if (!devfs_init())
         KERNEL_ERROR("Failed to init dev fs!");
 
+    //vfs_mkfile(root, "file.txt");
 
 
-    logf("root->name->[%s]\nroot->children_count->[%d]\n\n", root->name, root->children_count);
+    //(void)modules;
+    initrd_init(modules);
 
-    for (u64 v = 0; v <= root->children_count-1; v++){
-        logf("filename->[\"%s\"]\n\n",root->children[v]->name);
+    tracef("Listing directory /initrd/\n", NULL);
+
+    vfs_node * initrd = vfs_get_dir("/initrd/");
+
+    if (initrd == NULL){
+        tracef("Failed to get /initrd\n", NULL);
+    }
+    else{
+        for (u64 v = 0; v < initrd->children_count; v++){
+            logf("filename->[\"%s\"]\n",initrd->children[v]->name);
+        }
     }
 
+    vfs_node * dev = vfs_get_dir("/dev/");
 
-    logf("module_amount->[%d]\n\n", modules->module_count);
-    logf("Module 1 is = [%s]\n\n", modules->modules[0].string);
-
-    int file = fd_open("/dev/crap");
-    if (file < 0){
-        logf("Failed to get file or folder\n");
+    if (dev == NULL){
+        tracef("Failed to get /dev/", NULL);
     }
-    logf("\nopened file fd = %d\n", file);
-
-    char *data = pmm_calloc(100);
-
-    fd_write(file, 3 ,0 , "ls\0");
-    fd_read(file, 3, 0, data);
-
-    logf("adfadf = %s\n", data);
-
-    //initrd_init(modules);
+    else{
+        tracef("Listing directory /dev/\n", NULL);
+        for (u64 v = 0; v < dev->children_count; v++){
+            logf("filename->[\"%s\"]\n", dev->children[v]->name);
+        }
+    
+    }
+    
+    
 
     return true;
 }
 
 void main(struct stivale2_struct * stivale2_info) {
+
     init(stivale2_info);
     logf("[DONE]\n");
     for (;;){

@@ -1,6 +1,7 @@
 #ifndef __DRIVER_FS_TAR_HEADER__
 #define __DRIVER_FS_TAR_HEADER__
-
+#include <types.h>
+#include <kernel/fs/vfs.h>
 
 
 
@@ -24,6 +25,6 @@ struct tar_file_header{
     char NOTHING[12];
 } __attribute__((packed));
 
-
+vfs_node* tar_parse_filesystem(vfs_node *);
 
 #endif

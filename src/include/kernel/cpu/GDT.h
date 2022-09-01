@@ -9,7 +9,6 @@ struct SGDTDescriptor {
 
 typedef struct SGDTDescriptor GDTDescriptor;
 
-
 struct SGDTEntry {
     u16 Limit0;
     u16 BaseLow;

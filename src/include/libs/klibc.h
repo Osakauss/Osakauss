@@ -31,3 +31,5 @@ extern char *strdup(char *src);
 
 
 extern int oct2bin(char *str, int size);
+
+extern char *strtok(char *, char *);

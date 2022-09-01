@@ -83,7 +83,7 @@ extern void pmmInit(struct stivale2_struct_tag_memmap *memmap){
 
     for (u64 i = 0; i < memmap->entries; i++){
         if ( ((entries * 2)+(entries*sizeof(u32)) < memmap->memmap[i].length) && (memmap->memmap[i].type == 1)){
-            tracef("> found space for bitmap; entry->[\04%d\01]\n",i);
+            //tracef("> found space for bitmap; entry->[\04%d\01]\n",i);
             bitmap_.bitmap_setup = true; // set this to make sure that we now that we found enough space
             bitmap_.bitmap = (u32 *)(memmap->memmap[i].base + VIRTUALMEM_BASE); // we need to convert the physical address to virtual by adding VIRTUALMEM_BASE  to the physical address
             block_entries = (u32 *)(memmap->memmap[i].base + VIRTUALMEM_BASE + (entries*2));
@@ -177,7 +177,7 @@ extern void * pmm_alloc(u64 amount){
     }
 
     block_entries[start] = block_count; // make sure that we keep track of how many blocks where used in this address
-    logf("Block amount->[%d]\nblock_offset>[%d]\n", block_count,(u32)start);
+    //logf("Block amount->[%d]\nblock_offset>[%d]\n", block_count,(u32)start);
     u64 *address = (u64 *)(start_address + (start * BLOCK_SIZE)) + VIRTUALMEM_BASE; // calculate the memory address
     return (void *)address;
 }
@@ -187,7 +187,7 @@ extern void * pmm_alloc(u64 amount){
 extern void pmm_free(void *addr){ // i just know one day this thing is going to give me issues, i can feel it.
     // This will get the starting block that we will set FREE and all its friends that it was using.
     u64 block = address2blockoffset(addr); // make sure to take off 1 because we start from 0 not 1. we count like computers here
-    logf("removing block->[%d]\naddress->[%d]\n", (u32)block,addr);
+    //logf("removing block->[%d]\naddress->[%d]\n", (u32)block,addr);
     // block_entries[(u32)block];. that will give us how many blocks that are used by that memory.
     for (u64 v = 0; v < (u64)block_entries[(u32)block]; v++){
         SetBlock(block+v,FREE); // set all the blocks to FREE so that we know that we are done with them
