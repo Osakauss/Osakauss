@@ -22,8 +22,16 @@ static int read(vfs_node* node, u32 size, u32 offset, char *buffer){
     (void)size;
     (void)offset;
     (void)buffer;
-    logf("Tar read hasn't been implemented yet\n");
-    return 0;
+    
+    if ((u64)offset >= node->size){
+        return 0;
+    }
+    int size_read = size;
+    if ((u64)(offset+size) > node->size){
+        size_read = node->size - (u64)offset;
+    }
+    vfs_read(node->device, size_read, node->offset+offset, buffer);
+    return size_read;
 }
 
 
@@ -40,7 +48,7 @@ vfs_node* tar_parse_filesystem(vfs_node *filesystem_disk)
     }
 
 
-    strcpy(root->name, "initrd");
+    //strcpy(root->name, "initrd");
     root->children = (vfs_node**)pmm_calloc(sizeof(vfs_node));
     if (root->children == NULL){
         logf("Failed to get enough memory for tar filesystem\n");
@@ -78,6 +86,7 @@ vfs_node* tar_parse_filesystem(vfs_node *filesystem_disk)
         file->ops.read = read;
         file->offset = offset + sizeof(struct tar_file_header);
         file->type = VFS_NODE_FILE;
+        file->device = filesystem_disk;
 
         vfs_add_node(root, file);
   

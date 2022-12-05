@@ -34,7 +34,7 @@ int vfs_read(vfs_node *node, u32 size, u32 offset, char *buffer){
     return node->ops.read(node, size, offset, buffer);
 }
 
-int vfs_write(vfs_node *node , int size, int offset, char *data){
+int vfs_write(vfs_node *node , u32 size, u32 offset, char *data){
     if (node->ops.write == 0){
         return NULL;
     }
@@ -44,18 +44,12 @@ int vfs_write(vfs_node *node , int size, int offset, char *data){
 
 
 dynlist vfs_token_path(char *path){
-    //logf("path: %s\n", path);
-
     dynlist t;
     dl_init(&t);
-
     char *name = strtok(path, "/");
     while (name != NULL) {
         t.push(&t, name);
-        logf("name: %s\n", name);
         name = strtok(NULL, "/");
-        
-        
     }
 
     return t;
@@ -64,10 +58,6 @@ dynlist vfs_token_path(char *path){
 
 vfs_node *vfs_get_dir(char *name){
     dynlist path_tokens = vfs_token_path(name);
-
-    /*for (int index = 0; index < path_tokens.total(&path_tokens); index++){
-        logf("path:%d: %s\n", index, path_tokens.get(&path_tokens, index));
-    }*/
 
     if (path_tokens.total(&path_tokens) == 0){
         return vfs_root;
@@ -236,6 +226,7 @@ void vfs_mount(vfs_node *mountpoint, vfs_node * filesystem){
         return;
     }
     if (mountpoint->type != VFS_NODE_DIRECTORY){
+        tracef("Cannot mount filesystem to non directory node\n", NULL);
         return;
     }
     

@@ -43,6 +43,7 @@ typedef struct vfs_node{
     u64 children_count;
     u64 child_id;
     struct vfs_node *ptr;
+    struct vfs_node *device;
     int device_id;
 }vfs_node;
 
@@ -58,7 +59,7 @@ extern int vfs_add_node(vfs_node *parent, vfs_node *node);
 extern vfs_node* vfs_mkfile(vfs_node *parent, const char *name);
 extern vfs_node* vfs_mkdir(vfs_node *parent, char *name);
 
-extern int vfs_write(vfs_node *node , int size, int offset, char *data);
+extern int vfs_write(vfs_node *node , u32 size, u32 offset, char *data);
 extern int vfs_read(vfs_node *node, u32 size, u32 offset, char *buffer);
 
 extern int vfs_deldir(vfs_node *node);
